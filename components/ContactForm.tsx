@@ -1,10 +1,15 @@
 "use client";
 
 /**
- * NovaGlyphs Contact Form
- * Premium, minimal contact form. Fully functional client-side with loading + success states.
- * On submit: simulates a real request (replace with email service, Resend, Formspree, or API route).
- * Uses Sonner for elegant toast feedback.
+ * NovaGlyphs Contact Form - Production Ready
+ * 
+ * For a fully live form:
+ * 1. Go to https://formspree.io (free)
+ * 2. Create a new form
+ * 3. Copy the endpoint (looks like https://formspree.io/f/xxxxxx)
+ * 4. Replace the FORMSPREE_ENDPOINT below with your real one.
+ * 
+ * This will actually deliver emails to you with the data.
  */
 
 import { useState } from "react";
@@ -14,6 +19,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Send, Loader2 } from "lucide-react";
+
+// === IMPORTANT: Replace this with your real Formspree endpoint ===
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/YOUR_FORM_ID_HERE";
 
 export default function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -41,22 +49,41 @@ export default function ContactForm() {
 
     setIsSubmitting(true);
 
-    // === PRODUCTION INTEGRATION POINT ===
-    // Replace this block with your preferred email/API integration.
-    // Examples: 
-    // - POST to /api/contact (create route handler)
-    // - Resend / Sendgrid / Formspree / emailjs
-    // For now we simulate a 900ms roundtrip and always succeed.
-    await new Promise((r) => setTimeout(r, 900));
+    try {
+      const response = await fetch(FORMSPREE_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          company: formData.company || "Not provided",
+          message: formData.message,
+          _subject: `New inquiry from ${formData.name} via NovaGlyphs Studio`,
+        }),
+      });
 
-    toast.success("Transmission received. We will contact you within 48 hours.", {
-      description: "NovaGlyphs Studio — Sovereign Systems",
-      duration: 6200,
-    });
+      if (response.ok) {
+        toast.success("Transmission received.", {
+          description: "We'll respond within 48 hours. Thank you.",
+          duration: 7000,
+        });
 
-    // Reset
-    setFormData({ name: "", email: "", company: "", message: "" });
-    setIsSubmitting(false);
+        // Reset form
+        setFormData({ name: "", email: "", company: "", message: "" });
+      } else {
+        throw new Error("Form submission failed");
+      }
+    } catch (error) {
+      console.error("Form error:", error);
+      toast.error("Something went wrong sending your message.", {
+        description: "Please try again or email us directly via the links below.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
