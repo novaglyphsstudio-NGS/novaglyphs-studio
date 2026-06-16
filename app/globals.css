@@ -1,26 +1,358 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
+/* ============================================
+   NOVAGLYPHS STUDIO — ULTRA-CINEMATIC DARK VOID THEME
+   Strictly enforced: mysterious dark void aesthetic
+   Deep blacks (#020205, #05050a), indigo, electric cyan (#00f0ff),
+   magenta (#ff2e9a), gold (#d4af37) accents. Film grain, volumetric glows.
+   ============================================ */
+
+/* Font stack: Inter body, Space Grotesk display (headings) */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-space-grotesk);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* ============================================
+   BRAND COLOR PALETTE — CINEMATIC VOID
+   ============================================ */
+:root {
+  /* Core void & depth */
+  --bg-void: #020205;
+  --bg-deep: #05050a;
+  --bg-card: #0a0a12;
+  --bg-elevated: #11111a;
+
+  /* Accents */
+  --cyan: #00f0ff;
+  --cyan-dim: #00b8c4;
+  --magenta: #ff2e9a;
+  --magenta-dim: #c41d75;
+  --gold: #d4af37;
+  --gold-dim: #a68b2f;
+  --indigo: #16163a;
+  --indigo-deep: #0b0b22;
+
+  /* Text */
+  --text-primary: #f5f5f7;
+  --text-muted: #8a8a9a;
+  --text-subtle: #5f5f70;
+
+  /* Borders / glows */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-glow: rgba(0, 240, 255, 0.15);
+
+  /* Semantic overrides for shadcn + components */
+  --background: var(--bg-void);
+  --foreground: var(--text-primary);
+  --card: var(--bg-card);
+  --card-foreground: var(--text-primary);
+  --popover: var(--bg-deep);
+  --popover-foreground: var(--text-primary);
+  --primary: var(--cyan);
+  --primary-foreground: #020205;
+  --secondary: var(--indigo);
+  --secondary-foreground: var(--text-primary);
+  --muted: var(--bg-elevated);
+  --muted-foreground: var(--text-muted);
+  --accent: var(--magenta);
+  --accent-foreground: #ffffff;
+  --destructive: #ff4d6d;
+  --border: var(--border-subtle);
+  --input: rgba(255, 255, 255, 0.06);
+  --ring: var(--cyan);
+  --radius: 0.625rem;
+
+  /* Chart + sidebar neutral (rarely used but present) */
+  --chart-1: var(--cyan);
+  --chart-2: var(--magenta);
+  --chart-3: var(--gold);
+  --chart-4: #8b5cf6;
+  --chart-5: #f43f5e;
+}
+
+/* Force dark-only. No light theme ever. */
+.dark {
+  --background: var(--bg-void);
+  --foreground: var(--text-primary);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--bg-void);
+  --color-foreground: var(--text-primary);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-mono);
+  --font-heading: var(--font-space-grotesk);
+  --color-primary: var(--cyan);
+  --color-accent: var(--magenta);
+  --color-gold: var(--gold);
+  --color-card: var(--bg-card);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ============================================
+   BASE + PREMIUM TYPOGRAPHY
+   ============================================ */
+@layer base {
+  * {
+    outline: none;
+    border-color: var(--border);
+  }
+  html {
+    font-feature-settings: "tnum", "ss01";
+    scroll-behavior: smooth;
+  }
+  body {
+    font-family: var(--font-inter);
+    background: var(--bg-void);
+    color: var(--text-primary);
+  }
+  h1, h2, h3, h4, .font-heading {
+    font-family: var(--font-space-grotesk);
+    font-feature-settings: "tnum", "ss01", "salt";
+    letter-spacing: -0.02em;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ============================================
+   CINEMATIC FILM GRAIN OVERLAY (global subtle)
+   Ultra-premium mysterious texture. Low opacity.
+   ============================================ */
+.film-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+  background-size: 3px 3px;
+  mix-blend-mode: screen;
+  opacity: 0.55;
+  animation: grain 0.8s steps(1) infinite;
+}
+
+@keyframes grain {
+  0% { transform: translate(0, 0); }
+  10% { transform: translate(-0.5px, -0.5px); }
+  20% { transform: translate(-1px, 0.5px); }
+  30% { transform: translate(0.5px, 1px); }
+  40% { transform: translate(0, -0.5px); }
+  50% { transform: translate(-0.5px, 0.5px); }
+  60% { transform: translate(1px, 0); }
+  70% { transform: translate(0.5px, -0.5px); }
+  80% { transform: translate(-0.5px, 1px); }
+  90% { transform: translate(0.5px, 0.5px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* ============================================
+   GLOW & ACCENT UTILITIES (for cinematic feel)
+   ============================================ */
+.glow-cyan {
+  box-shadow: 0 0 6px rgba(0, 240, 255, 0.4),
+              0 0 20px rgba(0, 240, 255, 0.15);
+}
+.glow-magenta {
+  box-shadow: 0 0 6px rgba(255, 46, 154, 0.45),
+              0 0 22px rgba(255, 46, 154, 0.18);
+}
+.glow-gold {
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.5),
+              0 0 24px rgba(212, 175, 55, 0.2);
+}
+
+.text-cyan { color: var(--cyan); }
+.text-magenta { color: var(--magenta); }
+.text-gold { color: var(--gold); }
+
+.border-cyan { border-color: var(--cyan); }
+.border-magenta { border-color: var(--magenta); }
+
+/* ============================================
+   NAV + SECTION STYLES
+   ============================================ */
+.nav-link {
+  position: relative;
+  transition: color 0.2s ease;
+}
+.nav-link:hover {
+  color: var(--cyan);
+}
+.nav-link.active {
+  color: var(--cyan);
+}
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, var(--cyan), var(--magenta));
+}
+
+/* Premium glassmorphic fixed nav */
+.nav-glass {
+  background: rgba(5, 5, 10, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* ============================================
+   HERO 3D CANVAS CONTAINER + OVERLAYS
+   ============================================ */
+.hero-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(ellipse at center, #0a0a22 0%, var(--bg-void) 70%);
+}
+
+/* Elegant hero text treatment */
+.hero-headline {
+  font-family: var(--font-space-grotesk);
+  letter-spacing: -0.04em;
+  text-shadow: 0 2px 30px rgba(0, 0, 0, 0.6);
+}
+
+/* Subtle parallax / depth helper */
+.parallax-slow {
+  transition: transform 0.1s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* ============================================
+   CARDS — MYSTERIOUS PREMIUM
+   ============================================ */
+.premium-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+              box-shadow 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+              border-color 0.3s ease;
+}
+.premium-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-glow);
+  box-shadow: 0 20px 45px -15px rgba(0, 0, 0, 0.5),
+              0 0 0 1px rgba(0, 240, 255, 0.08);
+}
+
+/* Project card with video thumbnail treatment */
+.work-card {
+  overflow: hidden;
+}
+.work-card .thumb {
+  transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.work-card:hover .thumb {
+  transform: scale(1.06);
+}
+
+/* ============================================
+   3D SCENE SUPPORT (R3F)
+   ============================================ */
+.canvas-container {
+  width: 100%;
+  height: 100%;
+}
+
+/* ============================================
+   FORM & INPUTS (cinematic)
+   ============================================ */
+input, textarea {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+input:focus, textarea:focus {
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+}
+input::placeholder, textarea::placeholder {
+  color: var(--text-subtle);
+}
+
+/* ============================================
+   BUTTON OVERRIDES FOR BRAND (beyond shadcn)
+   ============================================ */
+.btn-primary {
+  background: linear-gradient(145deg, var(--cyan), #00c8d4);
+  color: #020205;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: all 0.2s cubic-bezier(0.23, 1.0, 0.32, 1);
+}
+.btn-primary:hover {
+  background: linear-gradient(145deg, #00f9ff, var(--cyan));
+  box-shadow: 0 0 0 1px rgba(0, 240, 255, 0.5),
+              0 10px 30px -10px rgba(0, 240, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.btn-outline {
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  transition: all 0.2s ease;
+}
+.btn-outline:hover {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+.btn-gold {
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  background: transparent;
+}
+.btn-gold:hover {
+  background: var(--gold);
+  color: #020205;
+}
+
+/* ============================================
+   SCROLL + MISC
+   ============================================ */
+.section {
+  scroll-margin-top: 80px;
+}
+
+/* Smooth section dividers with subtle cosmic line */
+.cosmic-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--border-subtle), transparent);
+}
+
+/* YouTube embed wrapper for responsive + premium frame */
+.yt-embed {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  background: #000;
+  border-radius: 12px;
+  border: 1px solid var(--border-subtle);
+}
+.yt-embed iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .hero-headline {
+    font-size: clamp(2.75rem, 11vw, 4.5rem);
+    line-height: 0.95;
+  }
+  .film-grain {
+    opacity: 0.4;
+  }
 }
